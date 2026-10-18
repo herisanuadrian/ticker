@@ -19,12 +19,14 @@
 <main>
   <label for="time">Duration (min:sec)</label>
   <input id="time" value="1:00" inputmode="numeric" placeholder="m:ss">
+  <label for="interval" style="margin-top:1rem">Tick every (seconds)</label>
+  <input id="interval" type="number" min="0.1" step="0.1" value="2">
   <div><button id="btn">Start</button></div>
   <div id="remaining">1:00</div>
   <div id="dot"></div>
 </main>
 <script>
-const INTERVAL = 2; // seconds between ticks
+let INTERVAL = 2; // seconds between ticks
 const $ = id => document.getElementById(id);
 let ctx, timer, startAt, endAt, nextTick, running = false;
 
@@ -63,6 +65,9 @@ function loop() {
 function start() {
   const secs = parse($('time').value);
   if (!secs) { $('time').focus(); return; }
+  const iv = parseFloat($('interval').value);
+  if (!(iv >= 0.1)) { $('interval').focus(); return; }
+  INTERVAL = iv;
   ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
   ctx.resume();
   startAt = nextTick = ctx.currentTime + 0.05;
